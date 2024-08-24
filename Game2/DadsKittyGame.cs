@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Input.Touch;
 using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace DadGames
 {
@@ -18,6 +19,7 @@ namespace DadGames
         SpriteBatch spriteBatch;
         Texture2D cat1, cat2;
         Vector2 catPos = new(100, 100);
+        SpriteEffects catFx = SpriteEffects.None;
         int moveFactor = 2;
         int animationRate = 5;
         bool moveFrame;
@@ -93,17 +95,25 @@ namespace DadGames
             if (keyboardState.IsKeyDown(Keys.Left))
             {
                 catPos.X -= moveFactor;
-                moveFrame = ((int)catPos.X / (moveFactor * animationRate)) % 2 == 1;
+                catFx = SpriteEffects.FlipHorizontally;
+                if (catPos.X < 0)
+                    catPos.X = 0;
+                else
+                    moveFrame = ((int)catPos.X / (moveFactor * animationRate)) % 2 == 1;
             }
             if (keyboardState.IsKeyDown(Keys.Right))
             {
                 catPos.X += moveFactor;
+                catFx = SpriteEffects.None;
                 moveFrame = ((int)catPos.X / (moveFactor * animationRate)) % 2 == 1;
             }
             if (keyboardState.IsKeyDown(Keys.Up))
             {
                 catPos.Y -= moveFactor;
-                moveFrame = ((int)catPos.Y / (moveFactor * animationRate)) % 2 == 1;
+                if (catPos.Y < 0)
+                    catPos.Y = 0;
+                else
+                    moveFrame = ((int)catPos.Y / (moveFactor * animationRate)) % 2 == 1;
             }
             if (keyboardState.IsKeyDown(Keys.Down))
             {
@@ -124,7 +134,7 @@ namespace DadGames
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-            spriteBatch.Draw(moveFrame ? cat2 : cat1, catPos, Color.White);
+            spriteBatch.Draw(moveFrame ? cat2 : cat1, catPos, null, Color.White, 0, Vector2.Zero, Vector2.One, catFx, 0);
             spriteBatch.End();
 
             base.Draw(gameTime);
